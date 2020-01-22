@@ -5,6 +5,7 @@ date: "1/22/2020"
 output: 
   html_document: 
     highlight: zenburn
+    theme: yeti
 ---
 
 ```{r setup, include=FALSE}
