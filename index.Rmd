@@ -5,9 +5,11 @@ date: "1/22/2020"
 output: 
   html_document: 
     highlight: zenburn
-    theme: yeti
+    theme: journal
 ---
 
+
+## Homework
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
