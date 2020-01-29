@@ -1,0 +1,42 @@
+---
+title: "HW 3"
+author: "Conor Dickson"
+date: "1/29/2020"
+output: html_document
+---
+## Homework
+
+Question 1  
+Find:```\t+```  
+Replace:,  
+Explanation: all tabs consecutively are replaced by a comma  
+
+Question 2  
+Find:```(\w+), (\w+), (.*)```  
+Replace:```\2 \1 \(\3\)```   
+Explanation: the first and second words are captured, excluding the comma and space. The second word is moved infront of the first.  The rest is parenthasized.   
+
+Question 3  
+Find: .mp3  
+Replace: ```.mp3\r```  
+Explanation: find all .mp3 words and add a return after each  
+
+Question 4  
+Find: ```(\d+) (.*)(.mp3)```  
+Replace: ```\2_\1\3```  
+Explanation: capture first number set, ".mp3", and everything in the middle. Number set after middle words and underscore and before .mp3.  
+
+Question 5  
+Find:```(\w)\w+,(\w+),.+,(\d+)```  
+Replace: ```\1_\2,\3```  
+Explanation: capture first letter, second word between commas, and last number series.  
+
+Question 6  
+Find: ```(\w)\w+,(\w\w\w\w)\w+,.+,(\d+)```  
+Replace: ```\1_\2,\3```  
+Explanation: capture first letter, first four letters of second word, and last number of line.  Replace with underscore and comma.  
+
+Question 7
+Find: ```(\w\w\w\w\w\w)\w+,\w+,(.+),(\d+)```  
+Replace: ```\1, \3, \2```  
+Explanation: capture first six letters of first word, second to last string of characters between commas ```(.+)```, and the string of numbers at the end.  Replace with first, third, and second capture with commas and space between.  

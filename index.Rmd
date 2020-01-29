@@ -9,5 +9,8 @@ output:
 ---
 
 
-## Homework  
+## Homework 1 
 [Homework 1](HW1.html)
+
+## Homework 3
+[Homework 3](HW3.html)
