@@ -1,0 +1,82 @@
+---
+title: "HW4"
+author: "Conor Dickson"
+date: "2/5/2020"
+output: html_document
+---
+```{r}
+# Question 1a
+x <- 1.1
+a <- 2.2
+b <- 3.3
+z <- c(x^(a^(b)))
+print(z)  #3.61714
+
+# Question 1b
+x <- 1.1
+a <- 2.2
+b <- 3.3
+z <- c(x^(a))^(b)
+print(z) #1.997611
+
+# Question 1c
+x <- 1.1
+z <- c(3*x^(3))+(2*x^(2))+1
+print(z) #426
+
+# Question 2a
+z <- c(seq(1,8),seq(7,1))
+print(z)
+
+# Question 2b
+z <- c(1, rep(2,2), rep(3,3), rep(4,4), rep(5,5))
+print(z)
+
+# Question 2c
+z <- c(rep(5,1), rep(4,2), rep(3,3), rep(2,4), rep(1,5))
+print(z)
+
+# Question 3
+a <- runif(2,0,10) #x=5.735641, y=6.879996
+r <- sqrt(a[1]^(2)+a[2]^(2))
+theta <- atan(a[2]/a[1])
+print(r)
+print(theta)
+
+# Question 4a
+queue <- c("sheep", "fox", "owl", "ant")
+queue <- c(queue, "serpent")
+print(queue)
+
+# 4b
+queue <- queue[-1]
+print(queue)
+
+# 4c
+queue <- c("donkey", queue)
+print(queue)
+
+# 4d
+queue <- queue[-5]
+print(queue)
+
+# 4e
+queue <- queue[-3]
+print(queue)
+
+# 4f
+queue <- append(queue, "aphid", after = 2)
+print(queue)
+
+# 4g
+which(queue == "aphid")
+
+# Question 5
+z <- c(1:100)
+print(z)
+z <- z[z%%2!=0&z%%3!=0&z%%7!=0] 
+print(z)
+  
+```
+
+
