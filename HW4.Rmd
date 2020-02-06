@@ -17,12 +17,12 @@ x <- 1.1
 a <- 2.2
 b <- 3.3
 z <- c(x^(a))^(b)
-print(z) #1.997611
+print(z) 
 
 # Question 1c
 x <- 1.1
 z <- c(3*x^(3))+(2*x^(2))+1
-print(z) #426
+print(z) 
 
 # Question 2a
 z <- c(seq(1,8),seq(7,1))
@@ -48,27 +48,27 @@ queue <- c("sheep", "fox", "owl", "ant")
 queue <- c(queue, "serpent")
 print(queue)
 
-# 4b
+# Question 4b
 queue <- queue[-1]
 print(queue)
 
-# 4c
+# Question 4c
 queue <- c("donkey", queue)
 print(queue)
 
-# 4d
+# Question 4d
 queue <- queue[-5]
 print(queue)
 
-# 4e
+# Question 4e
 queue <- queue[-3]
 print(queue)
 
-# 4f
+# Question 4f
 queue <- append(queue, "aphid", after = 2)
 print(queue)
 
-# 4g
+# Question 4g
 which(queue == "aphid")
 
 # Question 5
