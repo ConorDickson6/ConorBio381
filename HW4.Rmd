@@ -1,9 +1,10 @@
 ---
-title: "HW4"
+title: "HW 4"
 author: "Conor Dickson"
 date: "2/5/2020"
 output: html_document
 ---
+## Homework
 ```{r}
 # Question 1a
 x <- 1.1
@@ -17,7 +18,7 @@ x <- 1.1
 a <- 2.2
 b <- 3.3
 z <- c(x^(a))^(b)
-print(z) 
+print(z)
 
 # Question 1c
 x <- 1.1
