@@ -13,67 +13,66 @@ editor_options:
 n_dims <- sample(3:10, 1)
 print(n_dims)
 ```
-## Create a vector of consecutive integers from 1 to n_dims2.
+# Create a vector of consecutive integers from 1 to n_dims2.
 ```{r}
 vector_1 <- c(1:(n_dims)^2)
 print(vector_1)
 ```
-## Use the sample function to randomly reshuffle these values.
+# Use the sample function to randomly reshuffle these values.
 ```{r}
 vector_2 <- sample(vector_1)
 print(vector_2)
 ```
-## create a square matrix with these elements.
+# create a square matrix with these elements.
 ```{r}
 matrix_1 <- matrix(vector_2,nrow=n_dims,ncol=n_dims)
 
 ```
-print out the matrix.
+#print out the matrix.
 ```{r}
 print(matrix_1)
 ```
 
-## find a function in r to transpose the matrix.
+# find a function in r to transpose the matrix.
 ```{r}
 trans.matrix1 <- t(matrix_1)
 
 ```
 
-## print it out again and note how it has changed.
+# print it out again and note how it has changed.
 ```{r}
 print(trans.matrix1)
 ## rows have swapped with columns
 ```
 
-## calculate the sum and the mean of the elements in the first row and the last row.
+# calculate the sum and the mean of the elements in the first row and the last row.
 ```{r}
 sum <- c(mean(trans.matrix1[1,])+mean(trans.matrix1[4,]))
 print(sum)
 ```
 
-## read about the eigen() function and use it on your matrix
+# read about the eigen() function and use it on your matrix
 ```{r}
 eigen.stuff <- eigen(matrix_1)
 print(eigen.stuff)
 ```
 
-## look carefully at the elements of $values and $vectors. What kind of numbers are these?
+# look carefully at the elements of $values and $vectors. What kind of numbers are these?
+dig in with the typeof() function to figure out their type.
 ```{r}
 typeof(eigen.stuff)
 
 ```
 
-dig in with the typeof() function to figure out their type.
-
-## if have set your code up properly, you should be able to re-run it and create a matrix of different size because n_dims will change.
+# if have set your code up properly, you should be able to re-run it and create a matrix of different size because n_dims will change.
 ```{r}
 print(matrix_1)
 ```
 
-### Create a list with the following named elements:
-## my_matrix, which is a 4 x 4 matrix filled with random uniform values
-## my_logical which is a 100-element vector of TRUE or FALSE values. Do this efficiently by setting up a vector of random values and then applying an inequality to it.
-##  my_letters, which is a 26-element vector of all the lower-case letters in random order.
+## Create a list with the following named elements:
+# my_matrix, which is a 4 x 4 matrix filled with random uniform values
+# my_logical which is a 100-element vector of TRUE or FALSE values. Do this efficiently by setting up a vector of random values and then applying an inequality to it.
+#  my_letters, which is a 26-element vector of all the lower-case letters in random order.
 ```{r}
 list <- list(my_matrix=matrix(runif(1:16),nrow=4,ncol=4),
              my_logical=c(runif(100)>0.5),
@@ -86,7 +85,7 @@ print(list)
 
 
 
-## create a new list, which has the element[2,2] from the matrix, the second element of the logical vector, and the second element of the letters vector.
+# create a new list, which has the element[2,2] from the matrix, the second element of the logical vector, and the second element of the letters vector.
 ```{r}
 list2 <- list(list[[1]][2,2],
               list[[2]][2],
@@ -94,27 +93,27 @@ list2 <- list(list[[1]][2,2],
 print(list2)
 ```
 
-## use the typeof() function to confirm the underlying data types of each component in this list
+# use the typeof() function to confirm the underlying data types of each component in this list
 ```{r}
 typeof(list2[[1]])
 typeof(list2[[2]])
 typeof(list2[[3]])
 ```
 
-## combine the underlying elements from the new list into a single atomic vector with the c() function.
+# combine the underlying elements from the new list into a single atomic vector with the c() function.
 ```{r}
 vector_3 <- c(list[[1]],list[[2]],list[[3]])
 print(vector_3)
 ```
 
-## what is the data type of this vector?
+# what is the data type of this vector?
 ```{r}
 typeof(vector_3)
 ```
 
-### Create a data frame with two variables (= columns) and 26 cases (= rows).
-## call the first variable my_unis and fill it with a random uniform value from 0 to 10
-## call the second variable my_letters and fill it with 26 capital letters in random order.
+## Create a data frame with two variables (= columns) and 26 cases (= rows).
+# call the first variable my_unis and fill it with a random uniform value from 0 to 10
+# call the second variable my_letters and fill it with 26 capital letters in random order.
 ```{r}
 library(ggplot2)
 data_frame1 <- data.frame(my_units=runif(n=26,min=0,max=10),
@@ -123,17 +122,28 @@ print(data_frame1)
 ```
 
 
-for the first variable, use a single line of code in R to select 4 random rows and replace the numerical values in those rows with NA.
+# for the first variable, use a single line of code in R to select 4 random rows and replace the numerical values in those rows with NA.
 ```{r}
-library(base)
-library(naniar)
-print(data_frame1[,1])
-data_frame1[,1] <- replace_with_na_all(replace=list(sample.int(x=data_frame1[,1],size=4)))
+data_frame1[sample(1:26,4),1] <- NA
+
+print(data_frame1)
 
 ```
 
-for the first variable, write a single line of R code to identify which rows have the missing values.
+# for the first variable, write a single line of R code to identify which rows have the missing values.
+```{r}
+which(!complete.cases(data_frame1[,1]))
+```
 
-for the second variable, sort it in alphabetical order
+# for the second variable, sort it in alphabetical order
+```{r}
+data_frame1[,2] <- sort(letters, decreasing=FALSE)
+print(data_frame1)
+```
 
-calculate the column mean for the first variable.
+# calculate the column mean for the first variable.
+```{r}
+x <- mean(data_frame1[,1], na.rm=TRUE)
+print(x)
+```
+
