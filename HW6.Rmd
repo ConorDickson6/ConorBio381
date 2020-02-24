@@ -1,0 +1,184 @@
+---
+title: "HW6"
+author: "Conor Dickson"
+date: "2/19/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+1. Set up a new .Rmd file for this exercise. Copy and paste the code below into different code chunks, and then read the text and run the code chunks one at a time to see what they do. You probably won’t understand everything in the code, but this is a good start for seeing some realistic uses of ggplot. We will cover most of these details in the next few weeks.
+
+
+```{r}
+library(ggplot2) # for graphics
+library(MASS) # for maximum likelihood estimation
+
+# quick and dirty, a truncated normal distribution to work on the solution set
+
+z <- rnorm(n=3000,mean=0.2)
+z <- data.frame(1:3000,z)
+names(z) <- list("ID","myVar")
+z <- z[z$myVar>0,]
+print(z)
+str(z)
+summary(z$myVar)
+
+# Plot histogram of Data
+
+p1 <- ggplot(data=z, aes(x=myVar, y=..density..))  +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) # aes() defines dimension (x & y) names
+print(p1)
+
+# Add empirical density curve
+
+p1 <-  p1 +  geom_density(linetype="dotted",size=0.75)
+print(p1)
+
+# Get maximum likelihood parameters 
+
+normPars <- fitdistr(z$myVar,"normal")
+print(normPars)
+str(normPars)
+normPars$estimate["mean"] # note structure of getting a named attribute
+
+# Plot normal probability desnity 
+
+meanML <- normPars$estimate["mean"]
+sdML <- normPars$estimate["sd"]
+
+xval <- seq(0,max(z$myVar),len=length(z$myVar))
+
+ stat <- stat_function(aes(x = xval, y = ..y..), fun = dnorm, colour="red", n = length(z$myVar), args = list(mean = meanML, sd = sdML))
+ p1 + stat
+
+# Plot exponential probability density
+ 
+ expoPars <- fitdistr(z$myVar,"exponential")
+rateML <- expoPars$estimate["rate"]
+
+stat2 <- stat_function(aes(x = xval, y = ..y..), fun = dexp, colour="blue", n = length(z$myVar), args = list(rate=rateML))
+ p1 + stat + stat2
+ 
+# Plot uniform probability density
+
+ stat3 <- stat_function(aes(x = xval, y = ..y..), fun = dunif, colour="darkgreen", n = length(z$myVar), args = list(min=min(z$myVar), max=max(z$myVar)))
+ p1 + stat + stat2 + stat3
+
+# Plot gamma probability density
+
+gammaPars <- fitdistr(z$myVar,"gamma")
+shapeML <- gammaPars$estimate["shape"]
+rateML <- gammaPars$estimate["rate"]
+
+stat4 <- stat_function(aes(x = xval, y = ..y..), fun = dgamma, colour="brown", n = length(z$myVar), args = list(shape=shapeML, rate=rateML))
+ p1 + stat + stat2 + stat3 + stat4
+
+# Plot beta probability density
+ 
+pSpecial <- ggplot(data=z, aes(x=myVar/(max(myVar + 0.1)), y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) + 
+  xlim(c(0,1)) +
+  geom_density(size=0.75,linetype="dotted")
+
+betaPars <- fitdistr(x=z$myVar/max(z$myVar + 0.1),start=list(shape1=1,shape2=2),"beta")
+shape1ML <- betaPars$estimate["shape1"]
+shape2ML <- betaPars$estimate["shape2"]
+
+statSpecial <- stat_function(aes(x = xval, y = ..y..), fun = dbeta, colour="orchid", n = length(z$myVar), args = list(shape1=shape1ML,shape2=shape2ML))
+pSpecial + statSpecial
+```
+
+2. Once the code is in and runs, try running this analysis on your own data (or data from your lab). Find a vector of data (of any size), set it up in a .csv file, and read the data into a data frame with this code chunk:
+```{r}
+z <- read.table("PracticeData.csv",header=TRUE,sep=",", stringsAsFactors=FALSE)
+z <- z[z$Power>0,]
+print(z$Power)
+names(z)[1] <- "Hz"
+
+# Plot Histogram of data
+p1 <- ggplot(data=z, aes(x=Power,y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2)
+print(p1)
+
+#Add empirical density curve
+p1 <-  p1 +  geom_density(linetype="dotted",size=0.75)
+print(p1)
+
+# Maximum likelihood parameters
+normPars <- fitdistr(z$Power,"normal")
+print(normPars)
+str(normPars)
+normPars$estimate["mean"] # note structure of getting a named attribute
+
+# Plot normal probability density
+meanML <- normPars$estimate["mean"]
+sdML <- normPars$estimate["sd"]
+
+xval <- seq(0,max(z$Power),len=length(z$Power))
+
+ stat <- stat_function(aes(x = xval, y = ..y..), fun = dnorm, colour="red", n = length(z$Power), args = list(mean = meanML, sd = sdML))
+ p1 + stat # No negative values result in a biased curve
+
+# Plot exponential probability density
+expoPars <- fitdistr(z$Power,"exponential")
+rateML <- expoPars$estimate["rate"]
+
+stat2 <- stat_function(aes(x = xval, y = ..y..), fun = dexp, colour="blue", n = length(z$Power), args = list(rate=rateML))
+ p1 + stat + stat2
+
+# Uniform probability density
+ stat3 <- stat_function(aes(x = xval, y = ..y..), fun = dunif, colour="darkgreen", n = length(z$Power), args = list(min=min(z$Power), max=max(z$Power)))
+ p1 + stat + stat2 + stat3
+
+```
+
+3. Once your data are in, go ahead and comment out the “fake data” that are simulated in the chunk below. At that point, if you compile the entire file, it should run all of the code on your own data. Be sure to add comments to the code and commentary to the .Rmd file so that you can go back to it later and understand and use the code in your work.
+
+4. Take a look at the second-to-last graph which shows the histogram of your data and 4 probability density curves (normal, uniform, exponential, gamma) that are fit to the data. The beta distribution in the final graph is somewhat special. It often fits the data pretty well, but that is because we have assumed the largest data point is the true upper bound, and everything is scaled to that. The fit of the uniform distribution also fixes the upper bound. The other curves (normal, exponential, and gamma) are more realistic because they do not have an upper bound. For most data sets, the gamma will probably fit best, but if you data set is small, it may be very hard to see much of a difference between the curves.
+```{r}
+# Gamma probability density
+gammaPars <- fitdistr(z$Power,"gamma")
+shapeML <- gammaPars$estimate["shape"]
+rateML <- gammaPars$estimate["rate"]
+
+stat4 <- stat_function(aes(x = xval, y = ..y..), fun = dgamma, colour="brown", n = length(z$Power), args = list(shape=shapeML, rate=rateML))
+ p1 + stat + stat2 + stat3 + stat4
+
+# Beta probability density
+pSpecial <- ggplot(data=z, aes(x=Power/(max(Power + 0.1)), y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) + 
+  xlim(c(0,1)) +
+  geom_density(size=0.75,linetype="dotted")
+
+betaPars <- fitdistr(x=z$Power/max(z$Power + 0.1),start=list(shape1=1,shape2=2),"beta")
+shape1ML <- betaPars$estimate["shape1"]
+shape2ML <- betaPars$estimate["shape2"]
+
+statSpecial <- stat_function(aes(x = xval, y = ..y..), fun = dbeta, colour="orchid", n = length(z$Power), args = list(shape1=shape1ML,shape2=shape2ML))
+pSpecial + statSpecial
+```
+
+5. Using the best-fitting distribution, go back to the code and get the maximum likelihood parameters. Use those to simulate a new data set, with the same length as your original vector, and plot that in a histogram and add the probability density curve. Right below that, generate a fresh histogram plot of the original data, and also include the probability density curve.
+```{r}
+# Maximum likelihood parameters for Gamma distribution
+expoPars <- fitdistr(z$Power,"normal")
+print(expoPars)
+str(expoPars)
+expoPars$estimate["mean"]
+
+# Simulate gamma distribution
+my_norm <- rnorm(n=488,mean=87.58,sd=10.04)
+qplot(x=my_norm,
+      color=I("black"),
+      fill=I("goldenrod"))
+
+#Histogram of original data
+p1 <- ggplot(data=z, aes(x=Power,y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2)
+print(p1)
+
+# empirical density curve
+p1 <-  p1 +  geom_density(linetype="dotted",size=0.75)
+print(p1)
+```
+

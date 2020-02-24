@@ -20,3 +20,6 @@ output:
 
 ## Homework 5
 [Homework 5](HW5.html)
+
+## Homework 6
+[Homework 6](HW6.html)
