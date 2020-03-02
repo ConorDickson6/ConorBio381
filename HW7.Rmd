@@ -1,0 +1,96 @@
+---
+title: "HW7"
+author: "Conor Dickson"
+date: "2/26/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Normally distributed data set
+```{r}
+library(ggplot2)
+nGroup <- 2 # number of treatment groups
+nName <- c("5HzStim","12HzStim") # names of groups
+nSize <- c(61,61) # number of observations in each group
+nMean <- c(5,12) # mean of each group
+nSD <- c(5,5) # standardd deviation of each group
+```
+
+# Create Data Frame of data
+```{r}
+ID <- 1:(sum(nSize)) # id vector for each row
+resVar <- c(rnorm(n=nSize[1],mean=nMean[1],sd=nSD[1]),
+            rnorm(n=nSize[2],mean=nMean[2],sd=nSD[2]))
+TGroup <- rep(nName,nSize)
+ANOdata <- data.frame(ID,TGroup,resVar)
+ANOmodel <- aov(resVar~TGroup,data=ANOdata)
+print(ANOmodel)
+print(summary(ANOmodel))
+```
+
+# Plot of data
+```{r}
+ANOPlot <- ggplot(data=ANOdata,aes(x=TGroup,y=resVar,fill=TGroup)) +
+           geom_boxplot()
+print(ANOPlot)
+```
+
+# Resimulate: 
+*repeat loop of code prints p-values of 7 simulations
+```{r}
+count <- 1
+repeat {
+resVar <- c(rnorm(n=nSize[1],mean=nMean[1],sd=nSD[1]),
+            rnorm(n=nSize[2],mean=nMean[2],sd=nSD[2]))
+TGroup <- rep(nName,nSize)
+ANOdata <- data.frame(ID,TGroup,resVar)
+ANOmodel <- aov(resVar~TGroup,data=ANOdata)
+print(summary(ANOmodel)[[1]][["Pr(>F)"]]) # p-value
+count <- count + 1
+if(count > 7) {
+  break
+}
+}
+
+```
+
+# Adjust means; resimulate
+```{r}
+count <- 1
+repeat {
+nMean <- c(5,6.3)
+resVar <- c(rnorm(n=nSize[1],mean=nMean[1],sd=nSD[1]),
+            rnorm(n=nSize[2],mean=nMean[2],sd=nSD[2]))
+TGroup <- rep(nName,nSize)
+ANOdata <- data.frame(ID,TGroup,resVar)
+ANOmodel <- aov(resVar~TGroup,data=ANOdata)
+print(summary(ANOmodel)[[1]][["Pr(>F)"]]) # p-value
+count <- count + 1
+if(count > 7) {
+  break
+}
+}
+
+```
+
+# Adjust sample size
+```{r}
+count <- 1
+repeat {
+nSize <- c(7,7) # minimum sample size for each group=5
+ID <- 1:(sum(nSize))
+resVar <- c(rnorm(n=nSize[1],mean=nMean[1],sd=nSD[1]),
+            rnorm(n=nSize[2],mean=nMean[2],sd=nSD[2]))
+TGroup <- rep(nName,nSize)
+ANOdata <- data.frame(ID,TGroup,resVar)
+ANOmodel <- aov(resVar~TGroup,data=ANOdata)
+print(summary(ANOmodel)[[1]][["Pr(>F)"]]) # p-value
+count <- count + 1
+if(count > 7) {
+  break
+}
+}
+
+```
+
