@@ -1,0 +1,57 @@
+---
+title: "HW8"
+author: "Conor Dickson"
+date: "3/5/2020"
+output: html_document
+---
+```{r}
+library(dplyr)
+```
+
+Examine the structure of the iris dataset. How many observations and variables are in the dataset?
+```{r}
+data(iris)
+class(iris)
+head(iris)
+glimpse(iris)
+```
+
+Create a new data frame iris1 that contains only the species virginica and versicolor with sepal lengths longer than 6 cm and sepal widths longer than 2.5 cm. How many observations and variables are in the dataset?
+```{r}
+iris1 <- filter(iris, Species== c("virginica","versicolor") & Sepal.Length > 6.0 & Sepal.Width > 2.5)
+glimpse(iris1)
+```
+
+Now, create a iris2 data frame from iris1 that contains only the columns for Species, Sepal.Length, and Sepal.Width. How many observations and variables are in the dataset?
+```{r}
+iris2 <- select(iris1,c(Species,Sepal.Length,Sepal.Width))
+glimpse(iris2)
+```
+
+Create an iris3 data frame from iris2 that orders the observations from largest to smallest sepal length. Show the first 6 rows of this dataset.
+```{r}
+iris3 <- arrange(iris2, by= desc(Sepal.Length))
+head(iris3)
+```
+
+Create an iris4 data frame from iris3 that creates a column with a sepal area (length * width) value for each observation. How many observations and variables are in the dataset?
+```{r}
+iris4 <- mutate(iris3,Sepal.Area=Sepal.Length*Sepal.Width)
+glimpse(iris4)
+```
+
+Create iris5 that calculates the average sepal length, the average sepal width, and the sample size of the entire iris4 data frame and print iris5.
+```{r}
+iris5 <- summarize(iris4,avg.sepal.length=mean(Sepal.Length),avg.sepal.width=mean(Sepal.Width), sample.size=n())
+print(iris5)
+```
+
+Finally, create iris6 that calculates the average sepal length, the average sepal width, and the sample size for each species of in the iris4 data frame and print iris6.
+```{r}
+iris4species <- group_by(iris4, Species)
+iris6 <- summarize(iris4species,avg.sepal.length=mean(Sepal.Length),avg.sepal.width=mean(Sepal.Width), sample.size=n())
+print(iris6)
+```
+
+
+
