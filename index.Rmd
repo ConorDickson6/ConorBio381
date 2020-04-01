@@ -29,3 +29,6 @@ output:
 
 ## Homework 8
 [Homework 8](HW8.html)
+
+## Homework 9
+[Homework 9](HW9.html)

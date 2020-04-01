@@ -1,0 +1,100 @@
+---
+title: "HW9"
+author: "Conor Dickson"
+date: "3/30/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+# Library ---------------------------------------------
+library(ggplot2)
+# Global Variables ---------------------------------------------
+
+data_par <- data.frame(nGroup=2,
+                       nName=c("5HzStim","12HzStim"),
+                       nSize=c(61,61),
+                       nMean=c(5,12),
+                       nSD=c(5,5))
+print(data_par)
+# ---------------------------------------------------------------
+# FUNCTION generate_data
+# description: simulate data with expected parameters
+# inputs: data frame with nGroup, nName, nSize, nMean, nSD
+# outputs: data frame
+##################################################################
+generate_data <- function(data_par){
+  
+  ID <- 1:(sum(data_par$nSize)) # id vector for each row
+  resVar <- c(rnorm(n=data_par$nSize[1],mean=data_par$nMean[1],sd=data_par$nSD[1]),
+              rnorm(n=data_par$nSize[2],mean=data_par$nMean[2],sd=data_par$nSD[2]))
+  TGroup <- rep(data_par$nName,data_par$nSize)
+  SimData <- data.frame(ID,TGroup,resVar)
+  
+  
+  return(SimData)
+  
+} # end of generate_data
+#-----------------------------------------------------------------
+
+# -------------------------------------------------------------
+# FUNCTION analyze_data
+# description: ANOVA test of ANOdata
+# inputs: SimData data frame
+# outputs: summary of ANOVA
+###############################################################
+analyze_data <- function(SimData) {
+  
+  ANOmodel <- aov(resVar~TGroup,data=SimData)
+
+  return(summary(ANOmodel))
+  
+} # end of analyze_data
+#--------------------------------------------------------------
+
+# -------------------------------------------------------------
+# FUNCTION plot_data
+# description: boxplot of data
+# inputs: data frame of simulated data
+# outputs: boxplot comparing groups
+###############################################################
+plot_data <- function(SimData) {
+  
+  ANOPlot <- ggplot(data=SimData,aes(x=TGroup,y=resVar,fill=TGroup)) +
+    geom_boxplot()
+  print(ANOPlot)
+  
+  return("Boxplot")
+  
+} # end of plot_data
+#--------------------------------------------------------------
+
+# New function ---------------------------------------------
+
+# -------------------------------------------------------------
+# FUNCTION plot_data2
+# description: generate a density plot of data
+# inputs: simulated data
+# outputs: density plot
+###############################################################
+plot_data2 <- function(data=SimData) {
+  
+  ANOPlot2 <- ggplot(data=SimData,aes(x=resVar)) +
+    geom_density(aes(fill=factor(TGroup)),
+                 alpha=0.5)
+  ANOPlot2 <- ANOPlot2 + scale_fill_manual(values=c("blue","yellow"))
+  
+  print(ANOPlot2)
+  return("Density Plot")
+  
+} # end of plot_data2
+#--------------------------------------------------------------
+
+# Program body ---------------------------------------------
+SimData <- generate_data(data_par)
+analyze_data(SimData)
+plot_data(SimData)
+plot_data2(SimData) 
+```
+
+
