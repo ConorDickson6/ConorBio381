@@ -1,0 +1,217 @@
+---
+title: "HW10"
+author: "Conor Dickson"
+date: "4/1/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+1. Using a for loop, write a function to calculate the number of zeroes in a numeric vector. Before entering the loop, set up a counter variable counter <- 0. Inside the loop, add 1 to counter each time you have a zero in the matrix. Finally, use return(counter) for the output.
+```{r}
+# Numeric Vector ---------------------------------------------
+
+numeric_vector <- rep(0:10,5)
+
+# -------------------------------------------------------------
+# FUNCTION count_zeros
+# description: count the number of elements=0 in numeric vector
+# inputs: numeric vector
+# outputs: count of zeros in vector
+###############################################################
+count_zeros <- function(numeric_vector) {
+
+counter <- 0 # set up counter variable
+for (i in seq_along(numeric_vector)) {
+  if (numeric_vector[i]==0){ 
+  counter <- counter + 1# if an element of the vector=0, add 1 to counter variable
+  }
+}
+
+return(counter)
+
+} # end of count_zeros
+#--------------------------------------------------------------
+
+# Test Function ---------------------------------------------
+count_zeros(numeric_vector)
+
+```
+
+2. Use subsetting instead of a loop to rewrite the function as a single line of code.
+```{r}
+# -------------------------------------------------------------
+# FUNCTION count_zeros_sub
+# description: count zeros in numeric vector using subsetting
+# inputs: numeric vector
+# outputs: count of zeros in vector
+###############################################################
+count_zeros_sub <- function(numeric_vector) {
+
+counter <- length(numeric_vector[numeric_vector==0]) # what is the length of a vector subsetted with only values=0
+
+return(counter)
+
+} # end of count_zeros_sub
+#--------------------------------------------------------------
+
+# Test function ---------------------------------------------
+count_zeros_sub(numeric_vector)
+
+```
+
+3. Write a function that takes as input two integers representing the number of rows and columns in a matrix. The output is a matrix of these dimensions in which each element is the product of the row number x the column number.
+```{r}
+# Input ---------------------------------------------
+row <- 3
+col <- 4
+# -------------------------------------------------------------
+# FUNCTION generate_matrix
+# description: generate matrix using input as dimensions and calculation values for elements
+# inputs: number of rows and columns
+# outputs: data matrix
+###############################################################
+generate_matrix <- function(row,col) {
+
+matrix <- matrix(nrow=row,ncol=col)
+for (i in 1:row){
+  for (j in 1:col){
+    matrix[i,j] <- i*j
+  }
+}
+
+return(matrix)
+
+} # end of generate_matrix
+#--------------------------------------------------------------
+
+# Test Function ---------------------------------------------
+
+generate_matrix(row,col)
+
+```
+
+4. Use the code from the upcoming April 2nd lecture (Randomization Tests) to design and conduct a randomization test for some of your own data. You will need to modify the functions that read in the data, calculate the metric, and randomize the data. Once those are set up, the program should run correctly calling your new functions. Also, to make your analysis fully repeatable, make sure you set the random number seed at the beginning (use either set.seed() in base R, or char2seed in the TeachingDemos package
+```{r}
+library(ggplot2)
+library(TeachingDemos)
+set.seed(100)
+# -------------------------------------------------------------
+# FUNCTION read_data
+# description: read in (or generate) data set for analysis
+# inputs: file name(or nothing, as in this demo)
+# outputs: 3 column data frame of observed data (ID, x, y)
+###############################################################
+read_data <- function(z=NULL) {
+       
+  df <- read.table(file=z,
+               header=TRUE,
+               sep=",",
+              stringsAsFactors=FALSE)
+return(df)
+
+} # end of read_data
+#--------------------------------------------------------------
+# -------------------------------------------------------------
+# FUNCTION get_metric
+# description: calculate metric for randomization test
+# inputs: two column data frame for regression
+# outputs: regression slope
+###############################################################
+get_metric <- function(z=NULL) {
+        if(is.null(z)){
+          x_obs <- 1:20
+          y_obs <- x_obs + 10*rnorm(20)
+          z <- data.frame(ID=seq_along(x_obs),
+                          x_obs,
+                          y_obs)
+        }
+      . <- lm(z[,3]~z[,2])
+      . <- summary(.)
+      . <- .$coefficients[2,1]
+      slope <- .
+      
+return(slope)
+
+} # end of get_metric
+#--------------------------------------------------------------
+# -------------------------------------------------------------
+# FUNCTION shuffle_data
+# description: randomized data for regression analysis
+# inputs: 3 column data frame (ID,xvar,yvar)  
+# outputs: (shuffled) 3 column data frame (ID,xvar,yvar)
+###############################################################
+shuffle_data <- function(z=NULL) {
+          if (is.null(z)){
+            x_obs <- 1:20
+            y_obs <- x_obs + 10*rnorm(20)
+            z =  z <- data.frame(ID=seq_along(x_obs),
+                                 x_obs,
+                                 y_obs)}
+z[,3] <- sample(z[,3]) #sample/shuffle all values in all rows of the third column
+      
+return(z)
+
+} # end of shuffle_data
+#--------------------------------------------------------------
+# -------------------------------------------------------------
+# FUNCTION get_pval
+# description: calculate p value from simulation 
+# inputs: list of observed metric and vector of simulated metrics
+# outputs: lower, and upper tail probability value
+###############################################################
+get_pval   <- function(z=NULL) {
+        if(is.null(z)){
+          z <- list(rnorm(1),rnorm(1000))} # first value represents real slope (if we had one), second represents simulated slopes (much more)
+          p_lower <- mean(z[[2]]<=z[[1]]) # conditional function- what is the proportion of simulated values which are less than the observed value? 
+          p_upper <- mean(z[[2]]>=z[[1]]) #proportion of simulated values greater than observed value
+        
+          
+return(c(pL=p_lower,pU=p_upper))
+
+} # end of get_pval 
+#--------------------------------------------------------------
+##################################################
+# function: plot_ran_test
+# create ggplot of histogram of simulated values
+# input: list of observed metric and vector of simulated metrics
+# output: saved ggplot graph
+#------------------------------------------------- 
+plot_ran_test <- function(z=NULL) {
+  if(is.null(z)){
+    z <- list(rnorm(1),rnorm(1000)) }
+  dF <- data.frame(ID=seq_along(z[[2]]),simX=z[[2]])
+  p1 <- ggplot(data=dF,mapping=aes(x=simX))
+  p1 + geom_histogram(mapping=aes(fill=I("goldenrod"),color=I("black"))) +
+    geom_vline(aes(xintercept=z[[1]],col="blue")) 
+  
+
+} # end of plot_ran_test
+#--------------------------------------------------------------
+# End of Functions
+
+# Program Code ---------------------------------------------
+
+n_sim <- 10000 # number of simulated data sets
+x_sim <- rep(NA,n_sim) # set up empty vector for simulated slopes
+df <- read_data("HWData.csv")
+x <- get_metric(z=df)
+for (i in seq_len(n_sim)) {
+  x_sim[i] <- get_metric(shuffle_data(df)) #run simulation
+}
+slopes <- list(x,x_sim) 
+get_pval(slopes)
+plot_ran_test(slopes)
+
+```
+
+For comparison, calculate in R the standard statistical analysis you would use with these data. How does the p-value compare for the standard test versus the p value you estimated from your randomization test? If the p values seem very different, run the program again with a different starting seed (and/or increase the number of replications in your randomization test). If there are persistent differences in the p value of the standard test versus your randomization, what do you think is responsible for this difference?
+```{r}
+PSD_data <- read.csv("HWData.csv", header=T)
+linreg <- lm(PSD_data[,3]~PSD_data[,2])  
+    summary <- summary(linreg) 
+    pval <- summary$coefficients[2,4]  
+    pval
+# The p-value obtained by the linear regression (1e-04) is similar to that obtained by the randomization test
+```
+

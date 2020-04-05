@@ -36,7 +36,7 @@ generate_data <- function(data_par){
   
 } # end of generate_data
 #-----------------------------------------------------------------
-
+generate_data(data_par)
 # -------------------------------------------------------------
 # FUNCTION analyze_data
 # description: ANOVA test of ANOdata
