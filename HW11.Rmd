@@ -1,0 +1,86 @@
+---
+title: "HW11"
+author: "Conor Dickson"
+date: "4/8/2020"
+output: html_document
+---
+1 Repeat the exercise from the Batch Processing Lecture (7th April), but do it using real data sets rather than purely simulated. Check with folks in your lab to see if there are multiple data sets available for analysis. Stick to simple data analyses and graphics, but try to set it up as a batch process that will work on multiple files and save summary results to a common file.
+```{r}
+
+# -------------------------------------------------------------
+# FUNCTION reg_stats
+# description: fit linear models, extract model stats
+# inputs: two column data frame (x,y)
+# outputs: slope, pval, and r2
+###############################################################
+reg_stats <- function(d=NULL) {
+    if (is.null(d)){
+      x_var <- runif(10)
+      y_var <- runif(10)
+      d <- data.frame(x_var,y_var)
+    } 
+  . <- lm(data=d,d[,2]~d[,1])
+  . <- summary(.)
+  stats_list <- list(Slope=.$coefficients[2,1],
+                     pVal=.$coefficients[2,4],
+                     r2=.$r.squared)
+  
+
+return(stats_list)
+
+} # end of function_name
+#--------------------------------------------------------------
+library(TeachingDemos)
+char2seed("Flatpicking solo")
+
+#####################################################
+
+# Global variables
+file_folder <- "HWData/"
+n_files <- 2
+file_output <- "HW_StatsSummary.csv"
+file_names <- list.files(path=file_folder)
+#####################################################
+# create data frame to hold summary file statistics
+ID <- seq_along(file_names)
+file_name <- file_names
+slope <- rep(NA,length(file_names))
+p_val <- rep(NA,length(file_names))
+r2 <- rep(NA,length(file_names))
+
+stats_out <- data.frame(ID,file_name,slope,p_val,r2)
+
+# batch process by looping through the individual files
+
+for (i in seq_along(file_names)){
+  data <- read.table(file=paste(file_folder,file_names[i],
+                                sep=""),
+                     sep=",",
+                     header=TRUE)
+  d_clean <- data[complete.cases(data),] # subset for clearn cases
+  
+  . <- reg_stats(d_clean) # pull out regression stats from clean file
+  stats_out[i,3:5] <- unlist(.) # columns which need to be filled with stats of clean file
+}
+
+# set up an output file and incorporate a time stamp and minimal metadata
+write.table(cat("# Summary stats for",
+                "batch processing of regression models",
+                "/n",
+                "# timestamp: ",
+                as.character(Sys.time()),
+                "/n",
+                file=file_output,
+                row.names="",
+                col.names="",
+                sep=""))
+
+# now add the data frame
+write.table(x=stats_out,
+            file=file_output,
+            row.names=FALSE,
+            col.names=TRUE,
+            sep=",",
+            append=TRUE)
+print(stats_out)
+```
