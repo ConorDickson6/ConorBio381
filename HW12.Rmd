@@ -31,19 +31,19 @@ print(p1)
 p1 + theme_dark()
 p1 + theme_economist() # not a fan of either
 
-# Transform X-variable into log2 scale
-p <- ggplot(Puromycin, aes(x = conc, y = rate, color = state)) + 
+# Figure 2*: Transform X-variable into log2 scale
+p2 <- ggplot(Puromycin, aes(x = conc, y = rate, color = state)) + 
   geom_point() +
    scale_x_continuous(trans = 'log2') +
    labs(title="Reaction Velocity vs Enzyme Concentration",
            subtitle="with Puromycin treatment",
            x='substrate concentration',
            y='reaction velocity',
-       tag='Fig. 1')
-print(p)
+       tag='Fig. 2*')
+print(p2)
 
-# add correlation coefficients to each group
-p2 <- ggplot(Puromycin, aes(x = conc, y = rate, color = state), add = "reg.line",# Add regressin line
+# Figure 2: add correlation coefficients to each group
+p3 <- ggplot(Puromycin, aes(x = conc, y = rate, color = state), add = "reg.line",# Add regressin line
    conf.int = TRUE # Add confidence interval
    ) + 
   geom_point() +
@@ -53,9 +53,9 @@ p2 <- ggplot(Puromycin, aes(x = conc, y = rate, color = state), add = "reg.line"
            subtitle="with Puromycin treatment",
            x='substrate concentration',
            y='reaction velocity',
-       tag='Fig. 1') +
+       tag='Fig. 2') +
    stat_regline_equation(aes(label =  paste(..eq.label.., ..adj.rr.label.., sep = "~~~~"))) #add linear equation and correlation coefficient
-print(p2)
+print(p3)
 
 
 
