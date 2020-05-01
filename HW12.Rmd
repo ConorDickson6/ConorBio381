@@ -1,0 +1,71 @@
+---
+title: "HW12"
+author: "Conor Dickson"
+date: "4/28/2020"
+output: html_document
+---
+
+For this exerise, use your newly-developed ggplot chops to create some nice graphs from your own data (If you do not have a good data frame to use for graphics, use one of the many built-in data frames from R (other than mpg, which we are using in class)). Experiment with different themes, theme base sizes, aesthetics, mappings, and faceting. When you are finished, try exporting them to high quality pdfs, jpgs, eps files, or other formats that you would use for submission to a journal.
+In this exercise, I encourage you to improve your graphics with elements that we have not (yet) covered in ggplot. For example, can you change the labels on a facet plot so that they are more informative than the variable names that are supplied from your data frame? Can you figure out how to add text annotations, lines and arrows to your graph? Can you figure out how to use custom colors that you have chosen for your fills and lines? Your resources for these explorations are google, Stack Overflow – and Lauren!
+```{r}
+# Library ---------------------------------------------
+library(ggplot2)
+library(ggpubr)
+library(ggthemes)
+
+# Data ---------------------------------------------
+d <- Puromycin
+head(d)
+
+# Figure 1: Basic linear fit scatter plot; Reaction Rate vs Concentration---------------------------------------------
+p1 <- qplot(d$conc, d$rate, data = d, color = state,
+      geom=c("point", "smooth")) +
+   labs(title="Reaction Velocity vs Enzyme Concentration",
+           subtitle="with Puromycin treatment",
+           x='substrate concentration',
+           y='reaction velocity',
+       tag='Fig. 1')
+print(p1)
+
+# different themes
+p1 + theme_dark()
+p1 + theme_economist() # not a fan of either
+
+# Transform X-variable into log2 scale
+p <- ggplot(Puromycin, aes(x = conc, y = rate, color = state)) + 
+  geom_point() +
+   scale_x_continuous(trans = 'log2') +
+   labs(title="Reaction Velocity vs Enzyme Concentration",
+           subtitle="with Puromycin treatment",
+           x='substrate concentration',
+           y='reaction velocity',
+       tag='Fig. 1')
+print(p)
+
+# add correlation coefficients to each group
+p2 <- ggplot(Puromycin, aes(x = conc, y = rate, color = state), add = "reg.line",# Add regressin line
+   conf.int = TRUE # Add confidence interval
+   ) + 
+  geom_point() +
+   stat_smooth(aes(fill = state, color = state), method = "lm") +
+   scale_x_continuous(trans = 'log2') +
+   labs(title="Reaction Velocity vs Enzyme Concentration",
+           subtitle="with Puromycin treatment",
+           x='substrate concentration',
+           y='reaction velocity',
+       tag='Fig. 1') +
+   stat_regline_equation(aes(label =  paste(..eq.label.., ..adj.rr.label.., sep = "~~~~"))) #add linear equation and correlation coefficient
+print(p2)
+
+
+
+
+
+
+
+
+
+
+
+```
+
